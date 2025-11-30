@@ -2,7 +2,7 @@
 
 Simple FastAPI web app to manage X4: Foundations mods via symlinks.
 
-![Screenshot](sc.png)
+![Screenshot](static/sc.png)
 
 ## Quick Start
 
