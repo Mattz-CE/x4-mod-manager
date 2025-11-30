@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X4 Mod Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0a0c10;
+      --bg-panel: #12151c;
+      --bg-card: #1a1e28;
+      --bg-hover: #242a38;
+      --accent-cyan: #00d4ff;
+      --accent-cyan-dim: #00a8cc;
+      --accent-orange: #ff6b35;
+      --accent-green: #00ff88;
+      --accent-red: #ff3366;
+      --accent-purple: #a855f7;
+      --text-primary: #e8eaed;
+      --text-secondary: #9ca3af;
+      --text-dim: #6b7280;
+      --border-subtle: #2a3040;
+      --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.3);
+      --glow-orange: 0 0 20px rgba(255, 107, 53, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.03) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-deep) 0%, #0d1017 100%);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--bg-deep);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--text-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+
+    .logo .subtitle {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: -4px;
+    }
+
+    .settings-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .settings-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-indicator.ready {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+
+    .status-indicator.warning {
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--accent-orange);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .status-indicator.admin {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-panel);
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .stat-value.orange { color: var(--accent-orange); }
+    .stat-value.green { color: var(--accent-green); }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-primary);
+    }
+
+    .section-title.managed { color: var(--accent-cyan); }
+    .section-title.external { color: var(--accent-orange); }
+
+    .section-badge {
+      background: var(--bg-card);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .mods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 1rem;
+    }
+
+    .mod-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mod-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .mod-card.managed::before {
+      background: linear-gradient(90deg, var(--accent-cyan), transparent);
+    }
+
+    .mod-card.external::before {
+      background: linear-gradient(90deg, var(--accent-orange), transparent);
+    }
+
+    .mod-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .mod-card:hover::before {
+      opacity: 1;
+    }
+
+    .mod-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .mod-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .mod-id {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-family: monospace;
+    }
+
+    .mod-status {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .status-badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.installed {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+
+    .status-badge.not-installed {
+      background: rgba(107, 114, 128, 0.15);
+      color: var(--text-dim);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .status-badge.external {
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--accent-orange);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .mod-meta {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .mod-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .mod-description {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .mod-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-cyan-dim));
+      color: var(--bg-deep);
+    }
+
+    .btn-primary:hover {
+      box-shadow: var(--glow-cyan);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: rgba(255, 51, 102, 0.15);
+      color: var(--accent-red);
+      border: 1px solid rgba(255, 51, 102, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 51, 102, 0.25);
+    }
+
+    .btn-secondary {
+      background: var(--bg-hover);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-dim);
+      color: var(--text-primary);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-cyan);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-dim);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1001;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { border-color: var(--accent-green); }
+    .toast.error { border-color: var(--accent-red); }
+
+    .toast-icon {
+      font-size: 1.2rem;
+    }
+
+    .toast.success .toast-icon { color: var(--accent-green); }
+    .toast.error .toast-icon { color: var(--accent-red); }
+
+    .path-display {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      background: var(--bg-card);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-subtle);
+      word-break: break-all;
+    }
+
+    .refresh-btn {
+      margin-left: auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading .refresh-icon {
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-icon">X4</div>
+      <div>
+        <h1>MOD MANAGER</h1>
+        <div class="subtitle">Symlink-based mod management</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator warning" id="symlink-status" title="Checking...">
+        <span class="status-dot"></span>
+        <span id="symlink-status-text">Checking...</span>
+      </div>
+      <button class="settings-btn" onclick="openSettings()">
+        <span>⚙</span> Settings
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="path-display">
+      <strong>Extensions:</strong> <span id="extensions-path">{{ extensions_dir }}</span> &nbsp;|&nbsp;
+      <strong>Mods:</strong> <span id="mods-path">{{ mods_dir }}</span>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-value" id="stat-managed">0</span>
+        <span class="stat-label">Managed Mods</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value green" id="stat-installed">0</span>
+        <span class="stat-label">Installed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value orange" id="stat-external">0</span>
+        <span class="stat-label">External</span>
+      </div>
+      <button class="btn btn-secondary refresh-btn" onclick="loadMods()">
+        <span class="refresh-icon">↻</span> Refresh
+      </button>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title managed">🎮 Managed Mods</h2>
+        <span class="section-badge">from /mods folder</span>
+      </div>
+      <div class="mods-grid" id="managed-mods">
+        <div class="empty-state">
+          <div class="empty-state-icon">📦</div>
+          <p>No managed mods found</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title external">📁 External Mods</h2>
+        <span class="section-badge">already in extensions • not managed</span>
+      </div>
+      <div class="mods-grid" id="external-mods">
+        <div class="empty-state">
+          <div class="empty-state-icon">📂</div>
+          <p>No external mods found</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <h2>⚙ Settings</h2>
+      <div class="form-group">
+        <label>X4 Extensions Directory</label>
+        <input type="text" id="extensions-dir-input" placeholder="C:\Program Files (x86)\Steam\...">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon">✓</span>
+    <span class="toast-message">Success</span>
+  </div>
+
+  <script>
+    let modsData = { managed: [], external: [] };
+
+    async function loadMods() {
+      const btn = document.querySelector('.refresh-btn');
+      btn.classList.add('loading');
+      
+      try {
+        const res = await fetch('/api/mods');
+        modsData = await res.json();
+        renderMods();
+        updateStats();
+        document.getElementById('extensions-path').textContent = modsData.extensions_dir;
+        document.getElementById('mods-path').textContent = modsData.mods_dir;
+      } catch (e) {
+        showToast('Failed to load mods', 'error');
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    function renderMods() {
+      // Managed mods
+      const managedContainer = document.getElementById('managed-mods');
+      if (modsData.managed.length === 0) {
+        managedContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>No managed mods found in /mods folder</p>
+          </div>
+        `;
+      } else {
+        managedContainer.innerHTML = modsData.managed.map(mod => renderModCard(mod, true)).join('');
+      }
+
+      // External mods
+      const externalContainer = document.getElementById('external-mods');
+      if (modsData.external.length === 0) {
+        externalContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📂</div>
+            <p>No external mods in extensions folder</p>
+          </div>
+        `;
+      } else {
+        externalContainer.innerHTML = modsData.external.map(mod => renderModCard(mod, false)).join('');
+      }
+    }
+
+    function renderModCard(mod, isManaged) {
+      const statusBadge = isManaged
+        ? (mod.is_installed 
+            ? '<span class="status-badge installed">✓ Installed</span>'
+            : '<span class="status-badge not-installed">Not Installed</span>')
+        : '<span class="status-badge external">External</span>';
+
+      const actions = isManaged
+        ? (mod.is_installed
+            ? `<button class="btn btn-danger" onclick="uninstallMod('${mod.folder_name}')">Uninstall</button>`
+            : `<button class="btn btn-primary" onclick="installMod('${mod.folder_name}')">⚡ Install</button>`)
+        : '<span style="color: var(--text-dim); font-size: 0.8rem;">Managed externally</span>';
+
+      return `
+        <div class="mod-card ${isManaged ? 'managed' : 'external'}">
+          <div class="mod-header">
+            <div>
+              <div class="mod-name">${escapeHtml(mod.name)}</div>
+              <div class="mod-id">${escapeHtml(mod.id)} • ${escapeHtml(mod.folder_name)}</div>
+            </div>
+            <div class="mod-status">
+              ${statusBadge}
+            </div>
+          </div>
+          <div class="mod-meta">
+            <span>👤 ${escapeHtml(mod.author)}</span>
+            <span>📌 v${escapeHtml(mod.version)}</span>
+            ${mod.date ? `<span>📅 ${escapeHtml(mod.date)}</span>` : ''}
+          </div>
+          <div class="mod-description">${escapeHtml(mod.description) || 'No description'}</div>
+          <div class="mod-actions">
+            ${actions}
+          </div>
+        </div>
+      `;
+    }
+
+    function updateStats() {
+      document.getElementById('stat-managed').textContent = modsData.managed.length;
+      document.getElementById('stat-installed').textContent = modsData.managed.filter(m => m.is_installed).length;
+      document.getElementById('stat-external').textContent = modsData.external.length;
+    }
+
+    async function installMod(folderName) {
+      try {
+        const res = await fetch(`/api/mods/${folderName}/install`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to install');
+        showToast(`Installed ${folderName}`, 'success');
+        loadMods();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    async function uninstallMod(folderName) {
+      try {
+        const res = await fetch(`/api/mods/${folderName}/uninstall`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to uninstall');
+        showToast(`Uninstalled ${folderName}`, 'success');
+        loadMods();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    function openSettings() {
+      document.getElementById('extensions-dir-input').value = modsData.extensions_dir || '';
+      document.getElementById('settings-modal').classList.add('active');
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-modal').classList.remove('active');
+    }
+
+    async function saveSettings() {
+      const path = document.getElementById('extensions-dir-input').value.trim();
+      try {
+        const res = await fetch('/api/settings/extensions-dir', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to save');
+        showToast('Settings saved', 'success');
+        closeSettings();
+        loadMods();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.className = `toast ${type} show`;
+      toast.querySelector('.toast-icon').textContent = type === 'success' ? '✓' : '✕';
+      toast.querySelector('.toast-message').textContent = message;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Check admin/symlink status
+    async function checkStatus() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        const indicator = document.getElementById('symlink-status');
+        const text = document.getElementById('symlink-status-text');
+        
+        if (data.can_symlink) {
+          indicator.className = 'status-indicator ready';
+          if (data.is_admin) {
+            text.textContent = '🛡️ Admin Mode';
+            indicator.title = 'Running as Administrator - symlinks enabled';
+          } else {
+            text.textContent = '✓ Dev Mode';
+            indicator.title = 'Developer Mode enabled - symlinks work without admin';
+          }
+        } else {
+          indicator.className = 'status-indicator warning';
+          text.textContent = '⚠ No Symlink';
+          indicator.title = 'Cannot create symlinks. Run as admin or enable Developer Mode in Windows Settings.';
+        }
+      } catch (e) {
+        console.error('Failed to check status:', e);
+      }
+    }
+
+    // Initial load
+    checkStatus();
+    loadMods();
+
+    // Close modal on overlay click
+    document.getElementById('settings-modal').addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) closeSettings();
+    });
+  </script>
+</body>
+</html>
+
