@@ -331,7 +331,12 @@ def check_symlink_capability() -> bool:
         return False
 
 
-if __name__ == "__main__":
+def run():
+    """Entry point for uv run"""
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=9480)
+
+
+if __name__ == "__main__":
+    run()
 

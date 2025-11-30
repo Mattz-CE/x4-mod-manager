@@ -1,6 +1,6 @@
 # X4 Mod Manager 🚀
 
-Simple FastAPI web app to manage X4: Foundations mods via symlinks.
+Simple FastAPI web app to manage X4: Foundations mods via symlinks. Mainly used for fast prototyping and development of mods.
 
 ![Screenshot](static/sc.png)
 
@@ -8,17 +8,25 @@ Simple FastAPI web app to manage X4: Foundations mods via symlinks.
 
 ```bash
 cd x4-mod-manager
-pip install -r requirements.txt
-python main.py
+uv run main.py
 ```
 
 Open http://127.0.0.1:9480
+
+**Or with pip:**
+```bash
+pip install .
+python main.py
+```
 
 ## Symlinks on Windows
 
 Requires one of:
 - **Developer Mode** enabled (recommended) - Settings → Developer settings → ON
 - **Run as Administrator** - Use `run-admin.bat`
+Will show indicator as such
+![Screenshot](static/image.png)
+
 
 ## Structure
 
