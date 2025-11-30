@@ -2,14 +2,7 @@
 
 Simple FastAPI web app to manage X4: Foundations mods via symlinks.
 
-![Screenshot](screenshot.png)
-
-## Features
-
-- 🎮 **Managed Mods** - Detect mods in your local folder, install/uninstall via symlink
-- 📁 **External Mods** - View existing mods in extensions (marked as unmanaged)
-- ⚡ **Symlink Status** - Shows if admin/Developer Mode is enabled
-- ⚙️ **Configurable** - Set custom extensions directory path
+![Screenshot](sc.png)
 
 ## Quick Start
 
